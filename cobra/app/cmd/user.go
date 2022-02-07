@@ -5,8 +5,10 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
+	"unicode/utf8"
 )
 
 // userCmd 父命令
@@ -22,8 +24,23 @@ var userCmd = &cobra.Command{
 var userAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "添加用户; user add --name=?",
+	// 位置参数限制
+	//Args:  cobra.RangeArgs(1, 3),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return errors.New("参数数量不对")
+		}
+		// 判断姓名长度
+		count := utf8.RuneCountInString(args[0])
+		fmt.Printf("%v %v \n", args[0], count)
+		if count > 4 {
+			return errors.New("姓名长度过长")
+		}
+		return nil
+	},
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("添加用户：", name)
+		fmt.Println("添加用户：", args[0])
+		fmt.Println("位置参数(args):", args)
 	},
 }
 
@@ -53,4 +70,12 @@ func init() {
 	userCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "用户名")
 	// 本地标志(Flags): 仅仅当前命令有该参数选项。
 	userCmd.Flags().StringSliceVarP(&list, "list", "l", []string{}, "用户列表")
+
+	// 设置参数必需
+	/*err := userAddCmd.MarkFlagRequired("name")
+	if err != nil {
+		fmt.Println("--name 不能为空")
+		return
+	}*/
+
 }

@@ -31,6 +31,8 @@ go get -u github.com/spf13/cobra/cobra
 
 
 #### 参数限制
+
+##### 位置参数限制
 - NoArgs : 如果有任何位置参数，该命令将报告错误。
 
 - MinimumNArgs(int) :至少传 N 个位置参数，否则报错。
@@ -43,9 +45,14 @@ go get -u github.com/spf13/cobra/cobra
 
 - RangeArgs(min, max) : 传入位置参数个数 min<= N <= max，否则报错
 
+##### 标志参数限制
+标志默认是可选的。如果你想在缺少标志时命令报错，可使用MarkFlagRequired限制
+eg `userAddCmd.MarkFlagRequired("name")`
 
+##### 自定义位置限制
+基本上就是通过判断 args[0] ,去处理我们自己的逻辑
 
-
+#### cobra集成viper
 
 
 
